@@ -144,7 +144,34 @@ body{margin:0;padding:28px 18px 60px}
 .cp .rcard .x{position:absolute;top:8px;right:8px;appearance:none;cursor:pointer;width:28px;height:28px;border-radius:8px;border:1px solid var(--color-border-line);background:transparent;color:var(--color-fg-muted);font-size:16px;line-height:1}
 .cp .rcard .x:hover{color:var(--color-bad);border-color:var(--color-bad)}
 .cp .foot{font-size:12px;color:var(--color-fg-muted);text-align:center;margin-top:4px}
+.cp .months{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.cp .months .ml{font-size:13px;font-weight:800;color:var(--color-fg-muted);margin-right:2px}
+.cp .months .pf{padding:7px 14px}
 @media (max-width:600px){body{padding:14px 10px 40px}.cp .hero h1{font-size:23px}.cp .kpi .val{font-size:27px}.cp .big .val{font-size:28px}}
+/* 모바일: 표를 카드로 */
+@media (max-width:640px){
+  .cp .panel{padding:16px 14px}
+  .cp details.fold>summary{padding:16px 14px;font-size:16px;flex-wrap:wrap}
+  .cp details.fold>summary .hint{margin-left:0;width:100%}
+  .cp details.fold>.inner{padding:0 14px 16px}
+  .cp .tw{border:none;overflow:visible}
+  .cp .tw table,.cp .tw tbody,.cp .tw tr,.cp .tw td{display:block;width:auto}
+  .cp .tw thead{display:none}
+  .cp .tw tr{border:1px solid var(--color-border-line);border-radius:12px;padding:6px 12px;margin-bottom:10px;background:var(--color-panel)}
+  .cp .tw tbody tr+tr td{border-top:none}
+  .cp .tw tbody tr:hover td{background:transparent}
+  .cp .tw tr.total{background:color-mix(in srgb,var(--ind) 6%,var(--color-panel))}
+  .cp .tw tr.total td{background:transparent}
+  .cp .tw td{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;text-align:right;white-space:normal;border-top:1px dashed color-mix(in srgb,var(--color-border-line) 80%,transparent)}
+  .cp .tw td::before{content:attr(data-label);flex:none;text-align:left;font-size:12px;font-weight:700;color:var(--color-fg-muted)}
+  .cp .tw td:first-child{display:block;text-align:left;font-size:15px;font-weight:800;border-top:none;padding:6px 0 8px}
+  .cp .tw td:first-child::before{content:none}
+  .cp .tw td[colspan]{display:block;text-align:left;border-top:none}
+  .cp .tw td[colspan]::before{content:none}
+  .cp .tw td.wrap{min-width:0;text-align:right}
+  .cp .tw td.l{text-align:right}
+  .cp .tw td:first-child.l{text-align:left}
+}
 </style>
 </head>
 <body>
@@ -160,7 +187,9 @@ body{margin:0;padding:28px 18px 60px}
 
   <nav class="navs" aria-label="바로가기"><a href="#sku">SKU별 누적</a><a href="#issue">최근 이슈</a><a href="#trend">일별 추이</a><a href="#decide">금주 할 일</a><a href="#daily-table">일별 상세</a><a href="#keywords">키워드 분석</a><a href="#unit">옵션별 손익 기준</a><a href="#growth">재고·입고</a></nav>
 
-  <h2 class="period">이번 달 <span data-draw="k-month">—</span></h2>
+  <div class="months" role="group" aria-label="월 선택" data-draw="month-btns"></div>
+
+  <h2 class="period"><b data-draw="k-month-lbl" style="font-weight:800">이번 달</b> <span data-draw="k-month">—</span></h2>
 
   <section id="kpis" class="kpiwrap">
     <div class="grid3">
@@ -168,7 +197,7 @@ body{margin:0;padding:28px 18px 60px}
       <div class="kpi" id="card-cumnet"><div class="lbl">누적 매출액 · 쿠폰 차감</div><div class="val"><span data-draw="k-cumnet" class="dash-skeleton">—</span><small>만원</small></div><div class="sub">쿠폰 차감 전 <span data-draw="k-cumsales">—</span>만원</div><div class="gline" data-draw="gk-sales"></div></div>
       <div class="kpi" id="card-cumad"><div class="lbl">누적 광고비 · VAT 포함</div><div class="val"><span data-draw="k-cumad" class="dash-skeleton">—</span><small>만원</small></div><div class="sub">매출 대비 광고비 <span data-draw="k-cumacos">—</span>%</div><div class="gline" data-draw="gk-ad"></div></div>
     </div>
-    <p class="muted" style="margin:0">막대 = 11월 목표 대비 진척, 세로선 = 이번 달 중 지나간 기간. 막대가 선보다 짧으면 목표 속도보다 느린 거예요.</p>
+    <p class="muted" style="margin:0">막대 = 월 목표 대비 진척, 세로선 = 그달 중 지나간 기간. 막대가 선보다 짧으면 목표 속도보다 느린 거예요.</p>
   </section>
 
   <section id="summary" class="panel sum">
@@ -190,7 +219,7 @@ body{margin:0;padding:28px 18px 60px}
     <p class="muted note" style="margin-top:10px">효율 = 매출액(쿠폰 차감) ÷ 광고비(VAT 포함). 판매액은 WING 판매분석, 광고비는 광고센터 매출 성장 보고서(광고한 옵션 기준)와 신규 구매 고객 확보 보고서를 더한 값이에요. 쿠폰에 *가 붙은 건 현재 쿠폰액 × 판매량으로 추정한 값이에요. 신규 고객 캠페인(베지믹스+마그네슘)은 보고서가 캠페인 단위라 상품으로 나눌 수 없어 따로 두고 판정하지 않아요. 합계는 쿠팡봇 누적(위 카드)과 같고, 추정 쿠폰은 쿠팡봇 누적 쿠폰에 맞춰 상품별로 비례 배분했어요.</p>
   </section>
 
-  <h2 class="period">어제 <span data-draw="k-day1">—</span></h2>
+  <h2 class="period"><b data-draw="k-day1-lbl" style="font-weight:800">어제</b> <span data-draw="k-day1">—</span></h2>
 
   <section class="kpiwrap">
     <div class="grid3">
@@ -325,7 +354,7 @@ body{margin:0;padding:28px 18px 60px}
   <details>
     <summary>지표 정의</summary>
     <p>효율 = (판매액 − 쿠폰) ÷ 광고비(VAT 포함) × 100. 판매액은 쿠팡 윙 판매분석(쿠폰 차감 전), 광고비는 광고센터 집행 광고비 × 1.1이에요. 날짜마다 가장 최근의 정상 보고만 쓰고, 수집 실패 보고는 빼요. 누적 매출액(쿠폰 차감)은 쿠팡봇이 적은 누적 쿠폰으로 구하고, 누적 쿠폰이 비어 있는 날(11/20 이전 기록)은 누적 효율 × 누적 광고비로 되돌려 구해서 효율 반올림만큼(±0.5%) 차이가 날 수 있어요. 매출 대비 광고비 = 광고비 ÷ 매출액(쿠폰 차감) × 100.</p>
-    <p>11월 목표는 매출액(쿠폰 차감) 1,500만원 · 광고비 550만원 · ROAS 270%예요. 누적 카드 아래 막대는 목표 대비 진척이고, 세로선은 이번 달 중 지나간 기간이에요. 막대가 선보다 짧으면 목표 속도보다 느린 거예요. 월말 예상은 지금까지의 하루 평균이 그대로 이어진다고 본 값이에요.</p>
+    <p>월 목표는 데이터 시트 goals 탭에서 월마다 정해요(11월: 매출액(쿠폰 차감) 1,500만원 · 광고비 550만원 · ROAS 270%). 목표가 없는 달은 막대가 나오지 않아요. 맨 위 월 버튼으로 지난달을 고르면 그달 마지막 기록 기준으로 보여 줘요. 키워드·재고는 항상 가장 최근 기준이에요. 누적 카드 아래 막대는 목표 대비 진척이고, 세로선은 그달 중 지나간 기간이에요. 막대가 선보다 짧으면 목표 속도보다 느린 거예요. 월말 예상은 지금까지의 하루 평균이 그대로 이어진다고 본 값이에요.</p>
     <p>당 월 이익(광고 후 이익) = 상품별(매출액 × 이익률) − 광고비. 이익률은 옵션별 손익 기준의 상품 평균이고, 입고 물류비·보관비·외부 트래픽 작업비와 원가 기준이 없는 기타 상품의 이익은 빠져 있어요.</p>
     <p>최근 이슈는 최종 보고의 이슈를 효율 · 상품 · 키워드·운영 세 줄로 묶고 괄호 속 세부 내용은 줄였어요. 원문은 데이터 시트의 daily 탭 issue 칸에 있어요.</p>
     <p>키워드 ROAS = 전환매출 ÷ 광고비(VAT 포함) × 100, 광고센터 광고보고서의 어제 하루 키워드별 값이에요. 효율 좋음은 어제 ROAS 300% 이상, 제외 제안은 최근 7일 광고비 합계 1만원 이상인데 7일 주문 0건, 나머지는 관찰이에요. 신규 구매 고객 확보 캠페인(베지믹스+마그네슘)은 ROAS로 판단하지 않아 '판단 제외'예요. 손익 열은 어제 ROAS를 그 상품의 평균 손익분기 ROAS와 비교한 것이라, 클릭이 적은 키워드는 며칠 흐름으로 보세요.</p>
@@ -339,7 +368,7 @@ body{margin:0;padding:28px 18px 60px}
 <script>
 // ───────── 데이터 시트 설정 ─────────
 const SHEET_ID = '1nNL1_ePTKa6p7uR0j87AJRARR3dLcfOfUs_9Isxd5_k';
-const TABS = ['daily', 'monthly', 'keywords', 'inventory', 'ue'];
+const TABS = ['daily', 'monthly', 'keywords', 'inventory', 'ue', 'goals'];
 
 // ───────── 작은 런타임: 데이터 → 계산 → 그리기 ─────────
 const dash = (() => {
@@ -359,7 +388,14 @@ const dash = (() => {
   };
   const runDraw = (name) => {
     const f = draws[name]; if (!f) return;
-    document.querySelectorAll('[data-draw="' + name + '"]').forEach((el) => { try { f(el); } catch (e) { console.error(name, e); } });
+    document.querySelectorAll('[data-draw="' + name + '"]').forEach((el) => {
+      try { f(el); } catch (e) { console.error(name, e); }
+      // 모바일 카드 보기용: 칸마다 머리글 이름을 붙임
+      if (el.tagName === 'TBODY') {
+        const heads = [...el.closest('table').querySelectorAll('thead th')].map((th) => th.textContent.trim());
+        el.querySelectorAll('tr').forEach((tr) => [...tr.cells].forEach((td, i) => { td.dataset.label = heads[i] || ''; }));
+      }
+    });
   };
   const all = () => { Object.keys(draws).forEach(runDraw); listeners.forEach((f) => { try { f(); } catch (e) { console.error(e); } }); };
   return {
@@ -370,6 +406,7 @@ const dash = (() => {
     colors: ['#4f46e5', '#f59e0b', '#059669'],
     setRaw: (id, v) => { raw[id] = v; Object.keys(memo).forEach((k) => delete memo[k]); },
     redrawAll: all,
+    invalidate: () => { Object.keys(memo).forEach((k) => delete memo[k]); all(); },
     loadedAt: () => loadedAt,
     setLoaded: (t) => { loadedAt = t; }
   };
@@ -423,7 +460,19 @@ async function loadAll() {
 const num = (v) => (v == null || v === '' || isNaN(+v) ? null : +v);
 const dstr = (v) => (v == null ? '' : String(v).slice(0, 10));
 const yes = (v) => v === true || v === 'TRUE' || v === 'true' || v === 1;
+// 월 선택: window.cpMonth가 비어 있으면 기록이 있는 가장 최근 달
+const ym = (d) => String(d || '').slice(0, 7);
+dash.calc('months', {
+  inputs: ['raw_daily'],
+  fn: (rows) => [...new Set(rows.filter((r) => r.status === '정상' && r.day).map((r) => ym(dstr(r.day))))].sort().map((m) => ({ month: m }))
+});
+const selMonth = () => { const r = dash.data('months'); const ms = r.status === 'ok' ? r.data.map((x) => x.month) : []; const last = ms[ms.length - 1] || ''; return window.cpMonth && ms.includes(window.cpMonth) ? window.cpMonth : last; };
+const isPastMonth = () => { const r = dash.data('months'); const ms = r.status === 'ok' ? r.data.map((x) => x.month) : []; return !!ms.length && selMonth() !== ms[ms.length - 1]; };
 dash.calc('daily', {
+  inputs: ['dailyAll', 'months'],
+  fn: (all) => { const m = selMonth(); return all.filter((r) => ym(r.day) === m); }
+});
+dash.calc('dailyAll', {
   inputs: ['raw_daily'],
   fn: (rows) => {
     const byDay = {};
@@ -454,8 +503,10 @@ dash.calc('inv', {
   }
 });
 dash.calc('monthly', {
-  inputs: ['raw_monthly'],
-  fn: (rows) => {
+  inputs: ['raw_monthly', 'months'],
+  fn: (rows0) => {
+    const m = selMonth();
+    const rows = rows0.filter((r) => ym(dstr(r.day)) === m);
     const last = rows.map((r) => dstr(r.day)).filter(Boolean).sort().pop();
     return rows.filter((r) => last && dstr(r.day) === last).map((r) => ({ day: last, product: r.product || '', sales: num(r.sales), coupon: num(r.coupon), coupon_est: yes(r.coupon_est), ad_cost: num(r.ad_cost), units: num(r.units), note: r.note || '' }));
   }
@@ -509,10 +560,12 @@ dash.calc('pl', {
   }
 });
 dash.calc('goal', {
-  inputs: ['latest'],
-  fn: (latest) => {
-    const GOAL = { sales: 15000000, ad: 5500000, roas: 270 };
+  inputs: ['latest', 'raw_goals'],
+  fn: (latest, goals) => {
     const a = latest[0]; if (!a || a.cum_net == null) return [];
+    const gr = goals.find((g) => ym(dstr(g.month)) === ym(a.day));
+    if (!gr || num(gr.sales) == null) return [];
+    const GOAL = { sales: num(gr.sales), ad: num(gr.ad), roas: num(gr.roas) };
     const y = +a.day.slice(0, 4), m = +a.day.slice(5, 7), d = +a.day.slice(8, 10);
     const dim = new Date(Date.UTC(y, m, 0)).getUTCDate(), left = dim - d;
     const fcS = Math.round(a.cum_net / d * dim), fcA = Math.round(a.cum_ad_cost / d * dim);
@@ -667,12 +720,31 @@ dash.draw('bot-warn', (el) => {
   el.textContent = bad ? '쿠팡봇 ' + md(last.day) + ' 수집이 \'' + last.status + '\'로 끝났어요' + (last.issue ? ' (' + String(last.issue).slice(0, 80) + ')' : '') + '. 아래 숫자는 ' + md(lt) + ' 기준이에요.' : '';
 });
 dash.draw('foot', (el) => {
-  const errs = ['raw_daily', 'raw_monthly', 'raw_keywords', 'raw_inventory', 'raw_ue'].map((k) => dash.data(k)).filter((x) => x.status === 'error');
+  const errs = ['raw_daily', 'raw_monthly', 'raw_keywords', 'raw_inventory', 'raw_ue', 'raw_goals'].map((k) => dash.data(k)).filter((x) => x.status === 'error');
   const t = dash.loadedAt();
   if (!t) { el.textContent = '데이터를 불러오는 중…'; el.className = 'foot'; return; }
   el.className = errs.length ? 'foot err' : 'foot';
   el.textContent = errs.length ? '일부 데이터를 불러오지 못했어요: ' + errs[0].error + ' · 새로고침해 보세요' : '데이터: 구글 시트 · ' + t.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' 불러옴 · 10분마다 자동 갱신';
 });
+
+// 월 버튼
+window.cpMonth = '';
+dash.draw('month-btns', (el) => {
+  const r = dash.data('months');
+  el.replaceChildren();
+  if (r.status !== 'ok' || !r.data.length) return;
+  const ms = r.data.map((x) => x.month), cur = selMonth(), years = new Set(ms.map((m) => m.slice(0, 4)));
+  const lab = document.createElement('span'); lab.className = 'ml'; lab.textContent = '월 선택'; el.append(lab);
+  ms.slice().reverse().forEach((m, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pf';
+    b.textContent = (years.size > 1 ? m.slice(2, 4) + '년 ' : '') + (+m.slice(5, 7)) + '월' + (i === 0 ? ' · 진행 중' : '');
+    b.setAttribute('aria-pressed', String(m === cur));
+    b.onclick = () => { window.cpMonth = m; window.cpOpen.dt = false; dash.invalidate(); };
+    el.append(b);
+  });
+});
+dash.draw('k-month-lbl', (el) => { const r = dash.data('latest'); const d = r.status === 'ok' && r.data[0]; el.textContent = d && isPastMonth() ? (+String(d.day).slice(5, 7)) + '월 결과' : '이번 달'; });
+dash.draw('k-day1-lbl', (el) => { el.textContent = isPastMonth() ? '그달 마지막 기록' : '어제'; });
 
 // 펼치기/접기
 window.cpOpen = { dt: false, kw: false };
@@ -804,7 +876,7 @@ function goalLine(name, metric) {
     el.replaceChildren();
     const r = dash.data('goal');
     const g = r.status === 'ok' ? r.data.find((x) => x.metric === metric) : null;
-    if (!g) { el.textContent = r.status === 'error' ? '목표 계산 실패' : ''; return; }
+    if (!g) { el.textContent = r.status === 'error' ? '목표 계산 실패' : r.status === 'ok' && metric === '매출액' ? '이 달 목표가 없어요 · 데이터 시트 goals 탭에 넣으면 막대가 나와요' : ''; return; }
     const top = document.createElement('div'); top.className = 'gl-t';
     const a = document.createElement('span');
     const tag = document.createElement('b');
@@ -849,6 +921,7 @@ dash.draw('todo', (ol) => {
   const li0 = (t, c) => { const li = document.createElement('li'); li.className = 'empty ' + (c || ''); li.textContent = t; ol.append(li); };
   if (r.status === 'error') return li0('할 일을 계산하지 못했어요', 'err');
   if (r.status !== 'ok') return li0('—');
+  if (isPastMonth()) return li0('지난달을 보고 있어요. 할 일은 진행 중인 달을 고르면 나와요.');
   if (!r.data.length) return li0('지금 데이터로는 결정할 항목이 없어요.');
   const done = todoDone();
   r.data.forEach((d) => {
@@ -864,7 +937,7 @@ dash.draw('todo', (ol) => {
 });
 dash.draw('f-todo', (el) => {
   const r = dash.data('todo');
-  if (r.status !== 'ok') { el.textContent = '—'; return; }
+  if (r.status !== 'ok' || isPastMonth()) { el.textContent = '—'; return; }
   const done = todoDone();
   el.textContent = r.data.filter((d) => !done.has(d.key)).length + ' / ' + r.data.length;
 });
